@@ -23,7 +23,7 @@ public class JerseyResourceConfig extends ResourceConfig {
     @Inject
     public JerseyResourceConfig(ServiceLocator serviceLocator) {
         // Set package to look for resources in
-        packages("ua.taky.eventstore.api");
+        packages("ua.taky.eventstore.rest");
 
         LOGGER.info("Registering injectables...");
 
