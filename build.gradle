@@ -1,0 +1,62 @@
+defaultTasks 'cleanDist', 'test', 'pack'
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+//project coordinates
+version = 1.0
+
+ext {
+    jettyVersion = '9.1.0.M0'
+}
+
+repositories {
+    mavenCentral();
+}
+
+task cleanDist(dependsOn: clean) << {
+	delete 'dist'
+}
+
+dependencies {
+    compile 'org.eclipse.jetty:jetty-server:' + jettyVersion
+    compile 'org.eclipse.jetty:jetty-servlet:' + jettyVersion
+	compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.2'
+	compile 'org.glassfish.hk2:guice-bridge:2.2.0-b15'
+	
+	compile 'com.google.inject:guice:4.0-beta'
+
+    compile 'com.google.guava:guava:15.0'
+	compile 'com.google.code.gson:gson:2.2.4'
+	compile 'com.google.gag:gag:1.0.1'
+    compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'ch.qos.logback:logback-classic:1.0.3'
+	
+    testCompile 'org.testng:testng:6.8.7'
+}
+
+jar {
+    manifest {
+        def version = '1.0'
+		def manifestClasspath = configurations.compile.collect { 'lib/'+it.getName() }.join(' ')
+        def mainClass = 'ua.taky.eventstore.EntryPoint'
+        attributes 'Implementation-Title': 'Event store demo',
+            'Implementation-version': '1.0',
+            'Class-Path': manifestClasspath,
+            'Main-Class': mainClass
+    }
+}
+
+task copyDeps(dependsOn: cleanDist) << {
+    copy {
+        from configurations.compile
+        into 'dist/lib'
+    }
+}
+
+task pack(dependsOn: [copyDeps, jar]) << {
+	copy {
+		from jar.archivePath
+		into 'dist'
+	}
+}
