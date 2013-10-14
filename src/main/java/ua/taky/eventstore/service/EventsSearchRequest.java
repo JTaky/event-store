@@ -18,15 +18,17 @@ import org.slf4j.LoggerFactory;
 public class EventsSearchRequest {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EventsSearchRequest.class);
+	private static final String DATE_FORMAT_PATTERN = "yyyyMMdd";
+	private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 	
-	private static final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-	
-	public static EventsSearchRequest buildRequest(String city, String date, String interest, Integer budget){
+	public static EventsSearchRequest buildRequest(String city, String dateStr, String interest, Integer budget){
 		try {
-			return new EventsSearchRequest(city, toDate(date), interest, budget);
+			return new EventsSearchRequest(city, toDate(dateStr), interest, budget);
 		} catch (ParseException e) {
-			LOGGER.error("Cannot parse date " + date, e);
-			throw new RuntimeException("Cannot parse date", e);
+			String errMsg = String.format("Cannot parse date %s, expected %s format", 
+					dateStr, DATE_FORMAT_PATTERN);
+			LOGGER.error(errMsg, e);
+			throw new RuntimeException(errMsg, e);
 		}
 	}
 	

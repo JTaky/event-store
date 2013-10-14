@@ -11,10 +11,19 @@ import javax.ws.rs.QueryParam;
 
 import org.glassfish.jersey.process.internal.RequestScoped;
 
+import com.google.gson.GsonBuilder;
+
 import ua.taky.eventstore.domain.Event;
 import ua.taky.eventstore.service.EventsSearchRequest;
 import ua.taky.eventstore.service.EventsService;
 
+/**
+ * Jersey REST Controller.
+ * 
+ * TODO add validation support
+ * 
+ * @author taky
+ */
 @RequestScoped
 @Path("events")
 @Produces("application/json")
@@ -29,7 +38,7 @@ public class EventsController {
 			@DefaultValue("") @QueryParam("interest") String interest,
 			@QueryParam("budget") Integer budget){
 		List<Event> events = eventsService.searchEvents(EventsSearchRequest.buildRequest(city, day, interest, budget));
-		return "OK";
+		return new GsonBuilder().create().toJson(events);
 	}
 
 	@Inject
