@@ -28,24 +28,28 @@ public class EventsSearchRequestFilter extends Filter.FilterAdapter<Map<String, 
 	
 	@Override
 	public boolean accept(Map<String, Object> rhs){
-		//TODO must be refactored(in ideal should use predicates)
-		if(StringUtils.isNotBlank(req.city) && rhs.containsKey("city")){
-			if(!req.city.equals(rhs.get("city"))){
+		return isAcceptByCity(rhs) 
+				&& isAcceptByStart(rhs) 
+				&& isAcceptByInterests(rhs)
+				&& isAcceptByBudget(rhs);
+	}
+
+	private boolean isAcceptByBudget(Map<String, Object> rhs) {
+		if (req.budget != null && req.budget != 0 && rhs.containsKey("budget")) {
+			int eventBudget = 0;
+			try {
+				eventBudget = Integer.parseInt(rhs.get("budget").toString());
+			} catch (NumberFormatException e) {
+				LOGGER.warn("Illegal budget format in source - " + rhs, e);
+			}
+			if (eventBudget != 0 && req.budget < eventBudget) {
 				return false;
 			}
 		}
-		if(req.date != null && rhs.containsKey("start")){
-			try {
-				Date rhsDate = dateFormat.parse(rhs.get("start").toString().split("T")[0]);
-				java.sql.Date eventDay = new java.sql.Date(rhsDate.getTime());
-				java.sql.Date filterDay = new java.sql.Date(req.date.getTime());
-				if (!filterDay.equals(eventDay)) {
-					return false;
-				}
-			} catch(ParseException e) {
-				LOGGER.warn("Illegal date format in source - " + rhs, e);
-			}
-		}
+		return true;
+	}
+
+	private boolean isAcceptByInterests(Map<String, Object> rhs) {
 		if (req.interests != null && req.interests.length > 0 && isContainInterests(rhs)) {
 			String eventInterests = getInterests(rhs);
 			boolean isFoundIntersection = false;
@@ -59,14 +63,28 @@ public class EventsSearchRequestFilter extends Filter.FilterAdapter<Map<String, 
 				return false;
 			}
 		}
-		if (req.budget != null && req.budget != 0 && rhs.containsKey("budget")) {
-			int eventBudget = 0;
+		return true;
+	}
+
+	private boolean isAcceptByStart(Map<String, Object> rhs) {
+		if(req.date != null && rhs.containsKey("start")){
 			try {
-				eventBudget = Integer.parseInt(rhs.get("budget").toString());
-			} catch (NumberFormatException e) {
-				LOGGER.warn("Illegal budget format in source - " + rhs, e);
+				Date rhsDate = dateFormat.parse(rhs.get("start").toString().split("T")[0]);
+				java.sql.Date eventDay = new java.sql.Date(rhsDate.getTime());
+				java.sql.Date filterDay = new java.sql.Date(req.date.getTime());
+				if (!filterDay.equals(eventDay)) {
+					return false;
+				}
+			} catch(ParseException e) {
+				LOGGER.warn("Illegal date format in source - " + rhs, e);
 			}
-			if (eventBudget != 0 && req.budget < eventBudget) {
+		}
+		return true;
+	}
+
+	private boolean isAcceptByCity(Map<String, Object> rhs) {
+		if(StringUtils.isNotBlank(req.city) && rhs.containsKey("city")){
+			if(!req.city.equals(rhs.get("city"))){
 				return false;
 			}
 		}
