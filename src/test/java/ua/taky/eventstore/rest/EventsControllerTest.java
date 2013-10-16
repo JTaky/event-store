@@ -14,6 +14,7 @@ import java.util.List;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.UriInfo;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -71,7 +72,7 @@ public class EventsControllerTest {
 	
 	@Test
 	public void testEventsSearchSerializeJson(){
-		Event event = new Event("title");
+		Event event = new Event("title", "city", new DateTime(), new DateTime(), 1);
 		List<Event> events = Arrays.asList(event);
 		when(eventsService.searchEvents(any(EventsSearchRequest.class))).thenReturn(events);
 		

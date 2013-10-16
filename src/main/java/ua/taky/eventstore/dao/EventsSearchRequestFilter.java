@@ -16,7 +16,7 @@ import com.jayway.jsonpath.Filter;
 
 public class EventsSearchRequestFilter extends Filter.FilterAdapter<Map<String, Object>> {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(EventsSearchRequest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EventsSearchRequestFilter.class);
 	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
 	private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 	
