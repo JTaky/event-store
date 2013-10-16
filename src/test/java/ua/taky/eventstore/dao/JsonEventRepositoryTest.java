@@ -21,7 +21,7 @@ public class JsonEventRepositoryTest {
 	public void setUp(){
 		eventRepository = new JsonEventRepository();
 		eventRepository.setJsonSource(getClass().getResourceAsStream("Conferences.json"), 
-				getClass().getResourceAsStream("Conferences.json"));
+				getClass().getResourceAsStream("SportEvents.json"));
 	}
 
 	@Test
@@ -38,5 +38,14 @@ public class JsonEventRepositoryTest {
 		List<Event> eventList = eventRepository.searchEvents(req);
 		assertEquals(8, eventList.size());
 	}
+	
+	@Test
+	public void searchEventTestByInterests() throws IOException{
+		EventsSearchRequest req = EventsSearchRequest.builder()
+				.interests("agile", "volleyball")
+				.build();
+		List<Event> eventList = eventRepository.searchEvents(req);
+		assertEquals(6, eventList.size());
+	}	
 
 }

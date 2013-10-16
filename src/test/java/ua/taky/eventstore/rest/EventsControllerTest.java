@@ -11,6 +11,9 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.UriInfo;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -26,7 +29,6 @@ public class EventsControllerTest {
 	
 	private static final String city = "Kiev";
 	private static final String day = "20131220";
-	private static final String interest = "Ajax FC";
 	private static final Integer budget = 500;
 	
 	private EventsController eventsController;
@@ -38,25 +40,32 @@ public class EventsControllerTest {
 		eventsController = new EventsController();
 		eventsService = mock(EventsService.class);
 		eventsController.setEventsService(eventsService);
+		eventsController.setUriInfo(mockUriInfo());
 	}
 	
+	private UriInfo mockUriInfo() {
+		UriInfo mock = mock(UriInfo.class);
+		when(mock.getQueryParameters()).thenReturn(new MultivaluedHashMap<String, String>());
+		return mock;
+	}
+
 	@Test
 	public void testEventsSearch(){
-		String jsonAnswer = eventsController.events("", "", "", null);
+		String jsonAnswer = eventsController.events("", "", null);
 		assertNotNull(jsonAnswer);
 	}
 	
 	@Test
 	public void testEventsSearchInvokeService(){
-		eventsController.events("", "", "", null);
+		eventsController.events("", "", null);
 		verify(eventsService, atLeastOnce()).searchEvents(any(EventsSearchRequest.class));
 	}
 	
 	@Test
 	public void testEventsSearchPackAllParameters(){
 		EventsSearchRequest req
-			= EventsSearchRequest.builder().city(city).date(day).interest(interest).budget(budget).build();
-		eventsController.events(city, day, interest, budget);
+			= EventsSearchRequest.builder().city(city).date(day).budget(budget).build();
+		eventsController.events(city, day, budget);
 		verify(eventsService, Mockito.atLeastOnce()).searchEvents(req);
 	}
 	
@@ -66,7 +75,7 @@ public class EventsControllerTest {
 		List<Event> events = Arrays.asList(event);
 		when(eventsService.searchEvents(any(EventsSearchRequest.class))).thenReturn(events);
 		
-		String actual = eventsController.events("", "", "", null);
+		String actual = eventsController.events("", "", null);
 		String expected = new GsonBuilder().create().toJson(events);
 		
 		assertEquals(expected, actual);

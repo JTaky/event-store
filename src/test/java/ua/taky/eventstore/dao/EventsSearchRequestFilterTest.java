@@ -42,7 +42,8 @@ public class EventsSearchRequestFilterTest {
 		EventsSearchRequest req = EventsSearchRequest.builder()
 				.city("Rome")
 				.date("20130112")
-				.interest("software development")
+				.interests("software development")
+				.interests("agile")
 				.budget(100)
 				.build();
 		EventsSearchRequestFilter eventsFilter = new EventsSearchRequestFilter(req);
@@ -50,10 +51,10 @@ public class EventsSearchRequestFilterTest {
 		Map<String, Object> event = new HashMap<String, Object>(){{ 
 			put("city", "Rome");
 			put("start", "2013-01-12T10:00");
-			put("interest", "software development");
+			put("topics", "[agile, software development]");
 			put("budget", "90");
 		}};
-//		assertTrue(eventsFilter.accept(event));
+		assertTrue(eventsFilter.accept(event));
 	}
 	
 	@Test
@@ -66,21 +67,34 @@ public class EventsSearchRequestFilterTest {
 		Map<String, Object> event = new HashMap<String, Object>(){{ 
 			put("start", "2014-06-12T10:00");
 		}};
-//		assertFalse(eventsFilter.accept(event));
+		assertFalse(eventsFilter.accept(event));
 	}
 	
 	@Test
 	public void testFilterByCriteriaFalseInterest(){
 		EventsSearchRequest req = EventsSearchRequest.builder()
-				.interest("software process")
+				.interests("software process")
 				.build();
 		EventsSearchRequestFilter eventsFilter = new EventsSearchRequestFilter(req);
 		@SuppressWarnings("serial")
 		Map<String, Object> event = new HashMap<String, Object>(){{
-			put("interest", "software development");
+			put("topics", "[software development]");
 		}};
-//		assertFalse(eventsFilter.accept(event));
+		assertFalse(eventsFilter.accept(event));
 	}
+	
+	@Test
+	public void testFilterByCriteriaTrueInterest(){
+		EventsSearchRequest req = EventsSearchRequest.builder()
+				.interests("agile")
+				.build();
+		EventsSearchRequestFilter eventsFilter = new EventsSearchRequestFilter(req);
+		@SuppressWarnings("serial")
+		Map<String, Object> event = new HashMap<String, Object>(){{
+			put("sports", "[software development, software development, agile]");
+		}};
+		assertTrue(eventsFilter.accept(event));
+	}	
 	
 	@Test
 	public void testFilterByCriteriaTrueBudget(){
@@ -105,7 +119,7 @@ public class EventsSearchRequestFilterTest {
 		Map<String, Object> event = new HashMap<String, Object>(){{ 
 			put("budget", "110");
 		}};
-//		assertFalse(eventsFilter.accept(event));
+		assertFalse(eventsFilter.accept(event));
 	}	
 	
 }

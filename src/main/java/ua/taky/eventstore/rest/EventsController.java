@@ -1,5 +1,6 @@
 package ua.taky.eventstore.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,6 +9,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.process.internal.RequestScoped;
 
@@ -31,14 +34,22 @@ public class EventsController {
 	
 	private EventsService eventsService;
 	
+	@Context 
+	private UriInfo ui;
+	
 	@GET
 	public String events(
 			@DefaultValue("") @QueryParam("city") String city,
 			@DefaultValue("") @QueryParam("day") String day,
-			@DefaultValue("") @QueryParam("interest") String interest,
 			@DefaultValue("0") @QueryParam("budget") Integer budget){
-		List<Event> events = eventsService.searchEvents(EventsSearchRequest.builder().city(city).date(day).interest(interest).budget(budget).build());
+		List<String> interests = ui.getQueryParameters().get("interest");
+		interests = interests == null? new ArrayList<String>() : interests;
+		List<Event> events = eventsService.searchEvents(EventsSearchRequest.builder().city(city).date(day).interests(interests.toArray(new String[0])).budget(budget).build());
 		return new GsonBuilder().create().toJson(events);
+	}
+	
+	public void setUriInfo(UriInfo ui){
+		this.ui = ui;
 	}
 
 	@Inject

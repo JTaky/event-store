@@ -1,6 +1,7 @@
 package ua.taky.eventstore.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -10,7 +11,7 @@ public class EventsSearchRequestTest {
 	
 	private static final String city = "Kiev";
 	private static final String day = "20131220";
-	private static final String interest = "Ajax FC";
+	private static final String[] interests = new String[]{"Ajax FC"};
 	private static final Integer budget = 500;	
 	
 	@Test
@@ -28,11 +29,11 @@ public class EventsSearchRequestTest {
 	public void builderWithCityTest(){
 		EventsSearchRequest req = EventsSearchRequest.builder().city(city)
 				.date(day)
-				.interest(interest)
+				.interests(interests)
 				.budget(budget)
 				.build();
 		assertEquals(city, req.city);
-		assertEquals(interest, req.interest);
+		assertArrayEquals(interests, req.interests);
 		assertEquals(budget, req.budget);
 	}
 

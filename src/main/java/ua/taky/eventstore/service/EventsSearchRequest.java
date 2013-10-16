@@ -3,6 +3,7 @@ package ua.taky.eventstore.service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +22,7 @@ public class EventsSearchRequest {
 		
 		private String city = "";
 		private Date date = null;
-		private String interest =  "";
+		private String[] interests =  new String[0];
 		private Integer budget = 0;
 
 		public EventsSearchRequestBuilder city(String city) {
@@ -41,8 +42,8 @@ public class EventsSearchRequest {
 			return this;
 		}
 
-		public EventsSearchRequestBuilder interest(String interest) {
-			this.interest = interest;
+		public EventsSearchRequestBuilder interests(String... interests) {
+			this.interests = interests;
 			return this;
 		}
 
@@ -52,7 +53,7 @@ public class EventsSearchRequest {
 		}
 		
 		public EventsSearchRequest build() {
-			return new EventsSearchRequest(city, date, interest, budget);
+			return new EventsSearchRequest(city, date, interests, budget);
 		}		
 	}
 	
@@ -76,14 +77,14 @@ public class EventsSearchRequest {
 	
 	public final Date date;
 	
-	public final String interest;
+	public final String[] interests;
 	
 	public final Integer budget;
 	
-	private EventsSearchRequest(String city, Date date, String interest, Integer budget){
+	private EventsSearchRequest(String city, Date date, String[] interests, Integer budget){
 		this.city = city;
 		this.date = date;
-		this.interest = interest;
+		this.interests = interests;
 		this.budget = budget;
 	}
 	
@@ -91,23 +92,11 @@ public class EventsSearchRequest {
 	@Override
 	public String toString() {
 		return "EventsSearchRequest [city=" + city + ", date=" + date
-				+ ", interest=" + interest + ", budget=" + budget + "]";
+				+ ", interest=" + interests + ", budget=" + budget + "]";
 	}
 
-	/** {@inheritDoc}} */
 	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(budget)
-				.append(city)
-				.append(date)
-				.append(interest)
-				.toHashCode();
-	}
-
-	/** {@inheritDoc}} */
-	@Override
-	public boolean equals(Object obj) { 
-		//eclipse generated stuff
+	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -130,12 +119,20 @@ public class EventsSearchRequest {
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
-		if (interest == null) {
-			if (other.interest != null)
-				return false;
-		} else if (!interest.equals(other.interest))
+		if (!Arrays.equals(interests, other.interests))
 			return false;
 		return true;
 	}
+
+	/** {@inheritDoc}} */
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(budget)
+				.append(city)
+				.append(date)
+				.append(interests)
+				.toHashCode();
+	}
+	
 
 }
