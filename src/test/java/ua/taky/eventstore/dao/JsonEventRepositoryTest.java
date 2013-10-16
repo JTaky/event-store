@@ -5,10 +5,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.inject.Provider;
 
 import ua.taky.eventstore.domain.Event;
 import ua.taky.eventstore.service.EventsSearchRequest;
@@ -20,8 +26,13 @@ public class JsonEventRepositoryTest {
 	@Before
 	public void setUp(){
 		eventRepository = new JsonEventRepository();
-		eventRepository.setJsonSource(getClass().getResourceAsStream("Conferences.json"), 
-				getClass().getResourceAsStream("SportEvents.json"));
+		eventRepository.setJsonSource(new Provider<Set<InputStream>>() {
+			@Override
+			public Set<InputStream> get() {
+				return new HashSet<>(Arrays.asList(getClass().getResourceAsStream("Conferences.json"), 
+						getClass().getResourceAsStream("SportEvents.json")));
+			}
+		});
 	}
 
 	@Test
