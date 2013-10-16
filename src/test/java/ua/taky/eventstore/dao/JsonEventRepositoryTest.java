@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.Before;
@@ -24,13 +25,13 @@ public class JsonEventRepositoryTest {
 	}
 
 	@Test
-	public void searchEventsTest(){
+	public void searchEventsTest() throws IOException{
 		List<Event> actual = eventRepository.searchEvents(mock(EventsSearchRequest.class));
 		assertNotNull(actual);
 	}
 	
 	@Test
-	public void searchEventTestByCity(){
+	public void searchEventTestByCity() throws IOException{
 		EventsSearchRequest req = EventsSearchRequest.builder()
 				.city("Amsterdam")
 				.build();

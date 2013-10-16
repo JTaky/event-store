@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.Before;
@@ -34,7 +35,7 @@ public class EventsServiceTest {
 	}
 	
 	@Test
-	public void serarchEventsPassRequestToDao(){
+	public void serarchEventsPassRequestToDao() throws IOException{
 		EventsSearchRequest mockRequest = mock(EventsSearchRequest.class);
 		eventsService.searchEvents(mockRequest);
 		verify(eventsRepository, Mockito.atLeastOnce()).searchEvents(mockRequest);

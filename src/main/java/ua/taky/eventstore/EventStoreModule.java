@@ -10,22 +10,49 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ua.taky.eventstore.dao.IEventsRepository;
+import ua.taky.eventstore.dao.JsonEventRepository;
+import ua.taky.eventstore.service.EventsService;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
+import com.google.inject.Provider;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 
 public class EventStoreModule extends AbstractModule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventStoreModule.class);
 
-    private static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";	
+    private static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
+    
+    private static String[] jsonResources = new String[]{"Concerts.json", 
+    	"Conferences.json", 
+    	"SportEvents.json"};
 
 	@Override
 	protected void configure() {
 		bind(HttpServer.class);
-        // application properties
+		bind(EventsService.class);
+		bind(IEventsRepository.class).to(JsonEventRepository.class);
+		bindJsonStreams(binder());
         loadApplicationProperties(binder());
         LOGGER.trace(getClass().getName() + " was configured.");		
+	}
+
+	private void bindJsonStreams(Binder binder) {
+		Multibinder<InputStream> jsonStreamsBinder 
+			= Multibinder.newSetBinder(binder, InputStream.class, JsonSource.class);
+		for (String curResource : jsonResources) {
+			final String curResourceName = curResource;
+			jsonStreamsBinder.addBinding().toProvider(
+					new Provider<InputStream>() {
+						@Override
+						public InputStream get() {
+							return getClass().getResourceAsStream(curResourceName);
+						}
+					});
+		}
 	}
 	
     private void loadApplicationProperties(Binder binder) {
