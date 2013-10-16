@@ -55,7 +55,7 @@ public class EventsControllerTest {
 	@Test
 	public void testEventsSearchPackAllParameters(){
 		EventsSearchRequest req
-			= EventsSearchRequest.buildRequest(city, day, interest, budget);
+			= EventsSearchRequest.builder().city(city).date(day).interest(interest).budget(budget).build();
 		eventsController.events(city, day, interest, budget);
 		verify(eventsService, Mockito.atLeastOnce()).searchEvents(req);
 	}

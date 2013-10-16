@@ -36,8 +36,8 @@ public class EventsController {
 			@DefaultValue("") @QueryParam("city") String city,
 			@DefaultValue("") @QueryParam("day") String day,
 			@DefaultValue("") @QueryParam("interest") String interest,
-			@QueryParam("budget") Integer budget){
-		List<Event> events = eventsService.searchEvents(EventsSearchRequest.buildRequest(city, day, interest, budget));
+			@DefaultValue("0") @QueryParam("budget") Integer budget){
+		List<Event> events = eventsService.searchEvents(EventsSearchRequest.builder().city(city).date(day).interest(interest).budget(budget).build());
 		return new GsonBuilder().create().toJson(events);
 	}
 

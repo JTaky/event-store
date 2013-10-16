@@ -17,19 +17,51 @@ import org.slf4j.LoggerFactory;
  */
 public class EventsSearchRequest {
 	
+	public static class EventsSearchRequestBuilder {
+		
+		private String city = "";
+		private Date date = null;
+		private String interest =  "";
+		private Integer budget = 0;
+
+		public EventsSearchRequestBuilder city(String city) {
+			this.city = city;
+			return this;
+		}
+
+		public EventsSearchRequestBuilder date(String dateStr) {
+			try {
+				this.date = toDate(dateStr);
+			} catch (ParseException e) {
+				String errMsg = String.format("Cannot parse date %s, expected %s format", 
+						dateStr, DATE_FORMAT_PATTERN);
+				LOGGER.error(errMsg, e);
+				throw new RuntimeException(errMsg, e);
+			}
+			return this;
+		}
+
+		public EventsSearchRequestBuilder interest(String interest) {
+			this.interest = interest;
+			return this;
+		}
+
+		public EventsSearchRequestBuilder budget(Integer budget) {
+			this.budget = budget;
+			return this;
+		}
+		
+		public EventsSearchRequest build() {
+			return new EventsSearchRequest(city, date, interest, budget);
+		}		
+	}
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EventsSearchRequest.class);
 	private static final String DATE_FORMAT_PATTERN = "yyyyMMdd";
 	private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 	
-	public static EventsSearchRequest buildRequest(String city, String dateStr, String interest, Integer budget){
-		try {
-			return new EventsSearchRequest(city, toDate(dateStr), interest, budget);
-		} catch (ParseException e) {
-			String errMsg = String.format("Cannot parse date %s, expected %s format", 
-					dateStr, DATE_FORMAT_PATTERN);
-			LOGGER.error(errMsg, e);
-			throw new RuntimeException(errMsg, e);
-		}
+	public static EventsSearchRequestBuilder builder() {
+		return new EventsSearchRequestBuilder();
 	}
 	
 	private static Date toDate(String dateStr) throws ParseException {
@@ -55,12 +87,14 @@ public class EventsSearchRequest {
 		this.budget = budget;
 	}
 	
+	/** {@inheritDoc}} */
 	@Override
 	public String toString() {
 		return "EventsSearchRequest [city=" + city + ", date=" + date
 				+ ", interest=" + interest + ", budget=" + budget + "]";
 	}
 
+	/** {@inheritDoc}} */
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(budget)
@@ -70,8 +104,10 @@ public class EventsSearchRequest {
 				.toHashCode();
 	}
 
+	/** {@inheritDoc}} */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) { 
+		//eclipse generated stuff
 		if (this == obj)
 			return true;
 		if (obj == null)
