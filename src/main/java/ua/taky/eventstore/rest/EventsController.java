@@ -14,8 +14,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.process.internal.RequestScoped;
 
-import com.google.gson.GsonBuilder;
-
 import ua.taky.eventstore.domain.Event;
 import ua.taky.eventstore.service.EventsSearchRequest;
 import ua.taky.eventstore.service.EventsService;
@@ -45,7 +43,7 @@ public class EventsController {
 		List<String> interests = ui.getQueryParameters().get("interest");
 		interests = interests == null? new ArrayList<String>() : interests;
 		List<Event> events = eventsService.searchEvents(EventsSearchRequest.builder().city(city).date(day).interests(interests.toArray(new String[0])).budget(budget).build());
-		return new GsonBuilder().create().toJson(events);
+		return Event.getGson().toJson(events);
 	}
 	
 	public void setUriInfo(UriInfo ui){

@@ -23,8 +23,6 @@ import ua.taky.eventstore.domain.Event;
 import ua.taky.eventstore.service.EventsSearchRequest;
 import ua.taky.eventstore.service.EventsService;
 
-import com.google.gson.GsonBuilder;
-
 
 public class EventsControllerTest {
 	
@@ -77,7 +75,7 @@ public class EventsControllerTest {
 		when(eventsService.searchEvents(any(EventsSearchRequest.class))).thenReturn(events);
 		
 		String actual = eventsController.events("", "", null);
-		String expected = new GsonBuilder().create().toJson(events);
+		String expected = Event.getGson().toJson(events);
 		
 		assertEquals(expected, actual);
 	}	

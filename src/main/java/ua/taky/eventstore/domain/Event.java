@@ -1,8 +1,46 @@
 package ua.taky.eventstore.domain;
 
+import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.joda.time.DateTime;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
 public class Event {
+	
+	private static final Gson GSON = new GsonBuilder()
+		.registerTypeAdapter(Event.class, new Event.EventJsonAdapter())
+		.create();
+
+	//TODO date formatting should be in one place
+	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd mm:ss";
+	private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+	
+	public static class EventJsonAdapter implements JsonSerializer<Event> {
+		@Override
+		public JsonElement serialize(Event src, Type typeOfSrc,
+				JsonSerializationContext context) {
+			JsonObject obj = new JsonObject();
+	        obj.addProperty("name", src.title);
+	        obj.addProperty("city", src.city);
+	        obj.addProperty("start", dateFormat.format(src.start.toDate()));
+	        obj.addProperty("end", dateFormat.format(src.end.toDate()));
+	        obj.addProperty("price", src.price);
+
+	        return obj;
+		}
+	}
+	
+	public static Gson getGson(){
+		return GSON;
+	}
 	
 	public final String title;
 	public final String city;
