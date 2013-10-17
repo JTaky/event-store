@@ -46,7 +46,7 @@ jar {
     manifest {
         def version = '1.0'
 		def manifestClasspath = configurations.compile.collect { 'lib/'+it.getName() }.join(' ')
-        def mainClass = 'ua.taky.eventstore.EntryPoint'
+        def mainClass = 'ua.taky.eventstore.EventStoreEntryPoint'
         attributes 'Implementation-Title': 'Event store demo',
             'Implementation-version': '1.0',
             'Class-Path': manifestClasspath,
