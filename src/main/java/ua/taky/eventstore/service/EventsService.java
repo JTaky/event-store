@@ -12,6 +12,8 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gag.annotation.disclaimer.BossMadeMeDoIt;
+
 import ua.taky.eventstore.dao.IEventsRepository;
 import ua.taky.eventstore.domain.Event;
 
@@ -36,6 +38,7 @@ public class EventsService {
 		}
 	}
 
+	@BossMadeMeDoIt
 	List<Event> selectTopByBudget(EventsSearchRequest request,
 			List<Event> events) {
 		//TODO research data size, research metaheuristic algorithm or choose optimal heuristic
